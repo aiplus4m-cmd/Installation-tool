@@ -4,7 +4,10 @@
     "name": "Google Chrome",
     "category": "Trình duyệt web",
     "description": "Trình duyệt phổ biến nhất của Google",
-    "recommended": true
+    "recommended": true,
+    "match": [
+      "Google Chrome"
+    ]
   },
   {
     "id": "CocCoc.CocCoc",
@@ -32,7 +35,11 @@
     "name": "Opera",
     "category": "Trình duyệt web",
     "description": "Trình duyệt có VPN miễn phí",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Opera Stable*",
+      "Opera"
+    ]
   },
   {
     "id": "VNG.ZaloPC",
@@ -46,21 +53,33 @@
     "name": "Telegram",
     "category": "Nhắn tin & Họp trực tuyến",
     "description": "Nhắn tin nhanh, bảo mật",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Telegram Desktop*",
+      "Telegram"
+    ]
   },
   {
     "id": "Zoom.Zoom",
     "name": "Zoom",
     "category": "Nhắn tin & Họp trực tuyến",
     "description": "Họp trực tuyến, học online",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Zoom Workplace*",
+      "Zoom"
+    ]
   },
   {
     "id": "Microsoft.Teams",
     "name": "Microsoft Teams",
     "category": "Nhắn tin & Họp trực tuyến",
     "description": "Làm việc nhóm, họp trực tuyến",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Microsoft Teams*",
+      "Teams Machine-Wide Installer"
+    ]
   },
   {
     "id": "Discord.Discord",
@@ -81,7 +100,10 @@
     "name": "UniKey",
     "category": "Bộ gõ tiếng Việt",
     "description": "Bộ gõ tiếng Việt thông dụng nhất",
-    "recommended": true
+    "recommended": true,
+    "match": [
+      "UniKey*"
+    ]
   },
   {
     "id": "tuyenvm.OpenKey",
@@ -102,7 +124,12 @@
     "name": "Microsoft 365 (Office)",
     "category": "Văn phòng & PDF",
     "description": "Word, Excel, PowerPoint (cần bản quyền)",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Microsoft 365 *",
+      "Microsoft Office *",
+      "Microsoft Office"
+    ]
   },
   {
     "id": "TheDocumentFoundation.LibreOffice",
@@ -116,28 +143,42 @@
     "name": "ONLYOFFICE",
     "category": "Văn phòng & PDF",
     "description": "Bộ văn phòng miễn phí, giao diện giống Office",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "ONLYOFFICE*"
+    ]
   },
   {
     "id": "Adobe.Acrobat.Reader.64-bit",
     "name": "Adobe Acrobat Reader",
     "category": "Văn phòng & PDF",
     "description": "Đọc và ký file PDF",
-    "recommended": true
+    "recommended": true,
+    "match": [
+      "Adobe Acrobat*"
+    ]
   },
   {
     "id": "Foxit.FoxitReader",
     "name": "Foxit PDF Reader",
     "category": "Văn phòng & PDF",
     "description": "Đọc PDF nhẹ và nhanh",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Foxit PDF Reader*",
+      "Foxit Reader*"
+    ]
   },
   {
     "id": "SumatraPDF.SumatraPDF",
     "name": "Sumatra PDF",
     "category": "Văn phòng & PDF",
     "description": "Đọc PDF/ePub siêu nhẹ",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "SumatraPDF*",
+      "Sumatra PDF*"
+    ]
   },
   {
     "id": "Notion.Notion",
@@ -151,35 +192,50 @@
     "name": "7-Zip",
     "category": "Tiện ích hệ thống",
     "description": "Nén / giải nén file miễn phí",
-    "recommended": true
+    "recommended": true,
+    "match": [
+      "7-Zip*"
+    ]
   },
   {
     "id": "RARLab.WinRAR",
     "name": "WinRAR",
     "category": "Tiện ích hệ thống",
     "description": "Nén / giải nén RAR, ZIP",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "WinRAR*"
+    ]
   },
   {
     "id": "Notepad++.Notepad++",
     "name": "Notepad++",
     "category": "Tiện ích hệ thống",
     "description": "Trình soạn thảo văn bản mạnh mẽ",
-    "recommended": true
+    "recommended": true,
+    "match": [
+      "Notepad++*"
+    ]
   },
   {
     "id": "voidtools.Everything",
     "name": "Everything",
     "category": "Tiện ích hệ thống",
     "description": "Tìm file trên máy tức thì",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Everything*"
+    ]
   },
   {
     "id": "Microsoft.PowerToys",
     "name": "Microsoft PowerToys",
     "category": "Tiện ích hệ thống",
     "description": "Bộ công cụ tiện ích của Microsoft",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "PowerToys*"
+    ]
   },
   {
     "id": "ShareX.ShareX",
@@ -200,7 +256,11 @@
     "name": "CPU-Z",
     "category": "Tiện ích hệ thống",
     "description": "Xem thông tin phần cứng",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "CPUID CPU-Z*",
+      "CPU-Z*"
+    ]
   },
   {
     "id": "CrystalDewWorld.CrystalDiskInfo",
@@ -214,28 +274,41 @@
     "name": "HWiNFO",
     "category": "Tiện ích hệ thống",
     "description": "Theo dõi nhiệt độ và phần cứng",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "HWiNFO*"
+    ]
   },
   {
     "id": "VideoLAN.VLC",
     "name": "VLC Media Player",
     "category": "Đa phương tiện",
     "description": "Xem mọi định dạng video / nhạc",
-    "recommended": true
+    "recommended": true,
+    "match": [
+      "VLC media player"
+    ]
   },
   {
     "id": "Daum.PotPlayer",
     "name": "PotPlayer",
     "category": "Đa phương tiện",
     "description": "Trình phát video nhẹ, nhiều tùy chỉnh",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "PotPlayer*",
+      "Daum PotPlayer*"
+    ]
   },
   {
     "id": "CodecGuide.K-LiteCodecPack.Standard",
     "name": "K-Lite Codec Pack",
     "category": "Đa phương tiện",
     "description": "Bộ codec cho Windows Media Player",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "K-Lite Codec Pack*"
+    ]
   },
   {
     "id": "Spotify.Spotify",
@@ -249,7 +322,10 @@
     "name": "IrfanView",
     "category": "Đa phương tiện",
     "description": "Xem ảnh nhanh",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "IrfanView*"
+    ]
   },
   {
     "id": "OBSProject.OBSStudio",
@@ -263,7 +339,10 @@
     "name": "Audacity",
     "category": "Đa phương tiện",
     "description": "Chỉnh sửa âm thanh",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Audacity*"
+    ]
   },
   {
     "id": "DucFabulous.UltraViewer",
@@ -298,7 +377,10 @@
     "name": "Internet Download Manager",
     "category": "Tải xuống & Lưu trữ đám mây",
     "description": "Tăng tốc tải xuống (bản dùng thử)",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Internet Download Manager*"
+    ]
   },
   {
     "id": "qBittorrent.qBittorrent",
@@ -326,14 +408,21 @@
     "name": "Visual C++ Redistributable 2015-2022 (x64)",
     "category": "Thư viện hệ thống (Runtime)",
     "description": "Cần cho nhiều phần mềm và game",
-    "recommended": true
+    "recommended": true,
+    "match": [
+      "Microsoft Visual C++ 2015-20* Redistributable (x64)*",
+      "Microsoft Visual C++ v14 Redistributable (x64)*"
+    ]
   },
   {
     "id": "Microsoft.DotNet.DesktopRuntime.8",
     "name": ".NET Desktop Runtime 8",
     "category": "Thư viện hệ thống (Runtime)",
     "description": "Cần cho các ứng dụng .NET",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Microsoft Windows Desktop Runtime - 8.*"
+    ]
   },
   {
     "id": "Microsoft.DirectX",
@@ -347,14 +436,21 @@
     "name": "Java Runtime (JRE)",
     "category": "Thư viện hệ thống (Runtime)",
     "description": "Chạy các ứng dụng Java",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Java * Update *",
+      "Java(TM) *"
+    ]
   },
   {
     "id": "Microsoft.VisualStudioCode",
     "name": "Visual Studio Code",
     "category": "Lập trình",
     "description": "Trình soạn thảo code",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Microsoft Visual Studio Code*"
+    ]
   },
   {
     "id": "Git.Git",
@@ -368,7 +464,10 @@
     "name": "Python 3.12",
     "category": "Lập trình",
     "description": "Ngôn ngữ lập trình Python",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Python 3.12*"
+    ]
   },
   {
     "id": "OpenJS.NodeJS.LTS",
@@ -403,13 +502,19 @@
     "name": "Malwarebytes",
     "category": "Game & Bảo mật",
     "description": "Quét mã độc",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Malwarebytes*"
+    ]
   },
   {
     "id": "Bitwarden.Bitwarden",
     "name": "Bitwarden",
     "category": "Game & Bảo mật",
     "description": "Quản lý mật khẩu",
-    "recommended": false
+    "recommended": false,
+    "match": [
+      "Bitwarden*"
+    ]
   }
 ]

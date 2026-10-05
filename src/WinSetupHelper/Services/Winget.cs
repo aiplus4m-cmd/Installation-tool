@@ -99,6 +99,9 @@ namespace WinSetupHelper.Services
         public static Task<ProcResult> UninstallAsync(string id, Action<string> onLine) =>
             RunAsync($"uninstall --id {Quote(id)} -e --silent {Agreements}", onLine);
 
+        public static Task<ProcResult> UninstallByNameAsync(string displayName, Action<string> onLine) =>
+            RunAsync($"uninstall --name {Quote(displayName)} -e --silent {Agreements}", onLine);
+
         public static async Task<bool> IsInstalledAsync(string id)
         {
             var r = await RunAsync($"list --id {Quote(id)} -e {Agreements}");
@@ -122,7 +125,10 @@ namespace WinSetupHelper.Services
                 .ToList();
         }
 
-        /// <summary>Lấy danh sách ID các gói winget đã cài trên máy.</summary>
+        /// <summary>
+        /// Lấy danh sách ID các gói winget đã cài trên máy, kết hợp 'winget export'
+        /// (ID đầy đủ) và 'winget list' (bao gồm cả gói export bỏ sót).
+        /// </summary>
         public static async Task<HashSet<string>> GetInstalledIdsAsync(Action<string> log)
         {
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -141,7 +147,7 @@ namespace WinSetupHelper.Services
                                 if (!string.IsNullOrEmpty(pkg.PackageIdentifier))
                                     set.Add(pkg.PackageIdentifier);
                     }
-                    return set;
+                    log?.Invoke($"winget export: {set.Count} gói.");
                 }
             }
             catch (Exception ex)
@@ -153,14 +159,14 @@ namespace WinSetupHelper.Services
                 try { if (File.Exists(tmp)) File.Delete(tmp); } catch { }
             }
 
-            // Dự phòng: đọc bảng của 'winget list'
-            log?.Invoke("Dùng 'winget list' để kiểm tra ứng dụng đã cài...");
+            var before = set.Count;
             var r = await RunAsync($"list {Agreements}");
             foreach (var c in ParseTable(r.Lines).Where(c => c.Length >= 2))
             {
                 var id = FirstToken(c[1]);
                 if (IsValidId(id)) set.Add(id);
             }
+            log?.Invoke($"winget list: thêm {set.Count - before} gói.");
             return set;
         }
 

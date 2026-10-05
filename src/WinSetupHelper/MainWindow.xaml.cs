@@ -33,7 +33,7 @@ namespace WinSetupHelper
         private readonly Queue<Job> _queue = new Queue<Job>();
         private readonly string _logFile = Path.Combine(Path.GetTempPath(), "WinSetupHelper.log");
 
-        private HashSet<string> _installed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private InstalledIndex _installed = InstalledIndex.Empty;
         private ICollectionView _catalogView;
         private bool _wingetReady;
         private bool _processing;
@@ -61,7 +61,8 @@ namespace WinSetupHelper
                     Name = e.Name,
                     Description = e.Description,
                     Category = e.Category,
-                    Recommended = e.Recommended
+                    Recommended = e.Recommended,
+                    MatchNames = e.Match
                 };
                 item.PropertyChanged += Item_PropertyChanged;
                 _catalog.Add(item);
@@ -114,11 +115,13 @@ namespace WinSetupHelper
                 foreach (var i in AllItems().Where(i => !i.IsBusy || i.Phase == AppPhase.Checking))
                     i.SetBusy(AppPhase.Checking, "Đang kiểm tra...");
 
-                _installed = await Winget.GetInstalledIdsAsync(Log);
-                Log($"Tìm thấy {_installed.Count} ứng dụng đã cài (qua winget).");
+                var ids = await Winget.GetInstalledIdsAsync(Log);
+                var names = await Task.Run(() => InstalledApps.ReadDisplayNames());
+                _installed = new InstalledIndex(ids, names);
+                Log($"Tìm thấy {_installed.IdCount} gói winget và {_installed.NameCount} ứng dụng trong Programs and Features.");
 
                 foreach (var i in AllItems().Where(i => i.Phase == AppPhase.Checking))
-                    i.SetInstalled(_installed.Contains(i.Id));
+                    ApplyInstalledState(i, true);
 
                 var installedCount = _catalog.Count(i => i.IsInstalled);
                 SetOverall($"Đã cài {installedCount}/{_catalog.Count} ứng dụng trong danh mục.");
@@ -248,7 +251,7 @@ namespace WinSetupHelper
                         Description = string.IsNullOrEmpty(r.Version) ? "Ứng dụng từ kho winget" : "Phiên bản mới nhất: " + r.Version,
                         Category = "Kết quả tìm kiếm"
                     };
-                    item.SetInstalled(_installed.Contains(r.Id));
+                    ApplyInstalledState(item, false);
                     item.PropertyChanged += Item_PropertyChanged;
                     _searchResults.Add(item);
                 }
@@ -436,7 +439,9 @@ namespace WinSetupHelper
 
             if (Winget.IsSuccess(r.ExitCode))
             {
-                _installed.Add(item.Id);
+                _installed.AddId(item.Id);
+                item.InstalledId = item.Id;
+                item.InstalledName = null;
                 var text = Winget.NeedsReboot(r.ExitCode) ? "Đã cài đặt (cần khởi động lại)" : "Đã cài đặt";
                 item.SetInstalled(true, text);
                 Log($"✔ {item.Name}: {text}");
@@ -451,13 +456,22 @@ namespace WinSetupHelper
 
         private async Task<bool> UninstallAsync(AppItem item)
         {
-            Log($"▶ Gỡ bỏ {item.Name} ({item.Id})");
+            var target = item.InstalledId ?? item.InstalledName ?? item.Id;
+            Log($"▶ Gỡ bỏ {item.Name} ({target})");
             item.SetBusy(AppPhase.Uninstalling, "Đang gỡ bỏ...");
 
-            var r = await Winget.UninstallAsync(item.Id, line => Log("   " + line));
-            if (r.ExitCode == 0 || r.ExitCode == Winget.NoApplicationsFound || !await Winget.IsInstalledAsync(item.Id))
+            ProcResult r;
+            if (item.InstalledId == null && item.InstalledName != null)
+                r = await Winget.UninstallByNameAsync(item.InstalledName, line => Log("   " + line));
+            else
+                r = await Winget.UninstallAsync(item.InstalledId ?? item.Id, line => Log("   " + line));
+
+            if (!await StillInstalledAsync(item))
             {
-                _installed.Remove(item.Id);
+                _installed.RemoveId(item.InstalledId);
+                _installed.RemoveId(item.Id);
+                item.InstalledId = null;
+                item.InstalledName = null;
                 item.SetInstalled(false, "Đã gỡ bỏ");
                 Log($"✔ Đã gỡ bỏ {item.Name}");
                 return true;
@@ -467,6 +481,36 @@ namespace WinSetupHelper
             item.SetInstalled(true, "Gỡ bỏ thất bại: " + reason);
             Log($"✖ {item.Name}: gỡ bỏ thất bại ({reason})");
             return false;
+        }
+
+        /// <summary>Kiểm tra lại một ứng dụng sau khi gỡ (Registry + winget list).</summary>
+        private async Task<bool> StillInstalledAsync(AppItem item)
+        {
+            var names = await Task.Run(() => InstalledApps.ReadDisplayNames());
+            var index = new InstalledIndex(null, names);
+            if (index.FindName(item.InstalledName != null ? new[] { item.InstalledName } : PatternsOf(item)) != null)
+                return true;
+            var id = item.InstalledId ?? item.Id;
+            return await Winget.IsInstalledAsync(id);
+        }
+
+        private static string[] PatternsOf(AppItem item) =>
+            item.MatchNames != null && item.MatchNames.Length > 0 ? item.MatchNames : new[] { item.Name };
+
+        /// <summary>Đánh dấu đã cài / chưa cài dựa trên mã gói winget hoặc tên trong Programs and Features.</summary>
+        private void ApplyInstalledState(AppItem item, bool log)
+        {
+            var id = _installed.FindId(item.Id);
+            var name = id == null ? _installed.FindName(PatternsOf(item)) : null;
+            item.InstalledId = id;
+            item.InstalledName = name;
+            item.SetInstalled(id != null || name != null);
+
+            if (!log) return;
+            if (id != null && !string.Equals(id, item.Id, StringComparison.OrdinalIgnoreCase))
+                Log($"   {item.Name}: đã cài (gói {id})");
+            else if (name != null)
+                Log($"   {item.Name}: đã cài (phát hiện qua \"{name}\")");
         }
 
         /// <summary>Cập nhật trạng thái từ đầu ra của winget (chạy trên luồng nền).</summary>
