@@ -1,6 +1,17 @@
-# Windows Setup Helper (Installation-tool)
+<p align="center">
+  <a href="https://topvl.net"><img src="assets/logo.png" alt="NhảmStudio" width="360"></a>
+</p>
 
-Công cụ chạy trên Windows giúp **cài đặt nhanh các ứng dụng cần thiết sau khi cài mới Windows**.
+<h1 align="center">Windows Setup Helper</h1>
+
+<p align="center">
+  Công cụ chạy trên Windows giúp <b>cài đặt nhanh các ứng dụng cần thiết sau khi cài mới Windows</b>.<br>
+  Phát triển bởi <b>NhảmStudio</b> · <a href="https://topvl.net">https://topvl.net</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/aiplus4m-cmd/Installation-tool/releases/latest"><b>⬇ Tải bản mới nhất (WinSetupHelper.exe)</b></a>
+</p>
 
 ## Tính năng
 
@@ -55,3 +66,11 @@ Có thể đặt một file `apps.json` cùng thư mục với `WinSetupHelper.e
 - GitHub Actions (`.github/workflows/build-release.yml`) tự build trên `windows-latest`:
   - mọi nhánh: build và đính kèm exe vào phần *Artifacts* của lần chạy;
   - nhánh `main`: tự tạo **GitHub Release** `v1.0.<số lần build>` kèm `WinSetupHelper.exe` và file zip.
+
+## Tác giả
+
+- **Dev:** NhảmStudio
+- **Website:** [https://topvl.net](https://topvl.net)
+
+<img src="assets/icon.png" alt="Icon" width="64">
+

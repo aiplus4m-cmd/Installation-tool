@@ -51,6 +51,8 @@ jobs:
           body: |
             ## Windows Setup Helper v${{ env.APP_VERSION }}
 
+            Phát triển bởi **NhảmStudio** · Website: https://topvl.net
+
             Tải **WinSetupHelper.exe** và chạy (cần quyền Administrator).
 
             - Yêu cầu: Windows 10 (1809+) / Windows 11, có kết nối Internet.

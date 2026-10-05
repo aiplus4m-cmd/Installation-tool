@@ -18,6 +18,7 @@ namespace WinSetupHelper
 {
     public partial class MainWindow : Window
     {
+        private const string WebsiteUrl = "https://topvl.net";
         private const string AllCategories = "Tất cả danh mục";
         private const string RecommendedCategory = "★ Ứng dụng đề xuất";
 
@@ -52,7 +53,8 @@ namespace WinSetupHelper
 
         private async Task InitializeAsync()
         {
-            Log("Windows Setup Helper v" + typeof(MainWindow).Assembly.GetName().Version);
+            Log("Windows Setup Helper v" + typeof(MainWindow).Assembly.GetName().Version +
+                " — phát triển bởi NhảmStudio (" + WebsiteUrl + ")");
 
             foreach (var e in Catalog.Load(Log))
             {
@@ -759,6 +761,19 @@ namespace WinSetupHelper
         }
 
         // ───────────────────────────── Tiện ích ─────────────────────────────
+
+        private void Link_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            OpenWebsite(e.Uri.AbsoluteUri);
+            e.Handled = true;
+        }
+
+        private void Logo_Click(object sender, MouseButtonEventArgs e) => OpenWebsite(WebsiteUrl);
+
+        private static void OpenWebsite(string url)
+        {
+            try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); } catch { }
+        }
 
         private void SetOverall(string text) => OverallText.Text = text;
 
