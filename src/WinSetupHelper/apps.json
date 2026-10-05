@@ -1,0 +1,415 @@
+[
+  {
+    "id": "Google.Chrome",
+    "name": "Google Chrome",
+    "category": "Trình duyệt web",
+    "description": "Trình duyệt phổ biến nhất của Google",
+    "recommended": true
+  },
+  {
+    "id": "CocCoc.CocCoc",
+    "name": "Cốc Cốc",
+    "category": "Trình duyệt web",
+    "description": "Trình duyệt Việt Nam, hỗ trợ tải video, gõ tiếng Việt",
+    "recommended": false
+  },
+  {
+    "id": "Mozilla.Firefox",
+    "name": "Mozilla Firefox",
+    "category": "Trình duyệt web",
+    "description": "Trình duyệt mã nguồn mở, bảo mật",
+    "recommended": false
+  },
+  {
+    "id": "Brave.Brave",
+    "name": "Brave",
+    "category": "Trình duyệt web",
+    "description": "Trình duyệt chặn quảng cáo sẵn",
+    "recommended": false
+  },
+  {
+    "id": "Opera.Opera",
+    "name": "Opera",
+    "category": "Trình duyệt web",
+    "description": "Trình duyệt có VPN miễn phí",
+    "recommended": false
+  },
+  {
+    "id": "VNG.ZaloPC",
+    "name": "Zalo",
+    "category": "Nhắn tin & Họp trực tuyến",
+    "description": "Ứng dụng nhắn tin phổ biến tại Việt Nam",
+    "recommended": true
+  },
+  {
+    "id": "Telegram.TelegramDesktop",
+    "name": "Telegram",
+    "category": "Nhắn tin & Họp trực tuyến",
+    "description": "Nhắn tin nhanh, bảo mật",
+    "recommended": false
+  },
+  {
+    "id": "Zoom.Zoom",
+    "name": "Zoom",
+    "category": "Nhắn tin & Họp trực tuyến",
+    "description": "Họp trực tuyến, học online",
+    "recommended": false
+  },
+  {
+    "id": "Microsoft.Teams",
+    "name": "Microsoft Teams",
+    "category": "Nhắn tin & Họp trực tuyến",
+    "description": "Làm việc nhóm, họp trực tuyến",
+    "recommended": false
+  },
+  {
+    "id": "Discord.Discord",
+    "name": "Discord",
+    "category": "Nhắn tin & Họp trực tuyến",
+    "description": "Trò chuyện thoại / văn bản cho cộng đồng",
+    "recommended": false
+  },
+  {
+    "id": "Rakuten.Viber",
+    "name": "Viber",
+    "category": "Nhắn tin & Họp trực tuyến",
+    "description": "Nhắn tin và gọi điện miễn phí",
+    "recommended": false
+  },
+  {
+    "id": "UniKey.UniKey",
+    "name": "UniKey",
+    "category": "Bộ gõ tiếng Việt",
+    "description": "Bộ gõ tiếng Việt thông dụng nhất",
+    "recommended": true
+  },
+  {
+    "id": "tuyenvm.OpenKey",
+    "name": "OpenKey",
+    "category": "Bộ gõ tiếng Việt",
+    "description": "Bộ gõ tiếng Việt mã nguồn mở",
+    "recommended": false
+  },
+  {
+    "id": "lamquangminh.EVKey",
+    "name": "EVKey",
+    "category": "Bộ gõ tiếng Việt",
+    "description": "Bộ gõ tiếng Việt nhẹ, nhiều tính năng",
+    "recommended": false
+  },
+  {
+    "id": "Microsoft.Office",
+    "name": "Microsoft 365 (Office)",
+    "category": "Văn phòng & PDF",
+    "description": "Word, Excel, PowerPoint (cần bản quyền)",
+    "recommended": false
+  },
+  {
+    "id": "TheDocumentFoundation.LibreOffice",
+    "name": "LibreOffice",
+    "category": "Văn phòng & PDF",
+    "description": "Bộ văn phòng miễn phí, tương thích Office",
+    "recommended": false
+  },
+  {
+    "id": "ONLYOFFICE.DesktopEditors",
+    "name": "ONLYOFFICE",
+    "category": "Văn phòng & PDF",
+    "description": "Bộ văn phòng miễn phí, giao diện giống Office",
+    "recommended": false
+  },
+  {
+    "id": "Adobe.Acrobat.Reader.64-bit",
+    "name": "Adobe Acrobat Reader",
+    "category": "Văn phòng & PDF",
+    "description": "Đọc và ký file PDF",
+    "recommended": true
+  },
+  {
+    "id": "Foxit.FoxitReader",
+    "name": "Foxit PDF Reader",
+    "category": "Văn phòng & PDF",
+    "description": "Đọc PDF nhẹ và nhanh",
+    "recommended": false
+  },
+  {
+    "id": "SumatraPDF.SumatraPDF",
+    "name": "Sumatra PDF",
+    "category": "Văn phòng & PDF",
+    "description": "Đọc PDF/ePub siêu nhẹ",
+    "recommended": false
+  },
+  {
+    "id": "Notion.Notion",
+    "name": "Notion",
+    "category": "Văn phòng & PDF",
+    "description": "Ghi chú, quản lý công việc",
+    "recommended": false
+  },
+  {
+    "id": "7zip.7zip",
+    "name": "7-Zip",
+    "category": "Tiện ích hệ thống",
+    "description": "Nén / giải nén file miễn phí",
+    "recommended": true
+  },
+  {
+    "id": "RARLab.WinRAR",
+    "name": "WinRAR",
+    "category": "Tiện ích hệ thống",
+    "description": "Nén / giải nén RAR, ZIP",
+    "recommended": false
+  },
+  {
+    "id": "Notepad++.Notepad++",
+    "name": "Notepad++",
+    "category": "Tiện ích hệ thống",
+    "description": "Trình soạn thảo văn bản mạnh mẽ",
+    "recommended": true
+  },
+  {
+    "id": "voidtools.Everything",
+    "name": "Everything",
+    "category": "Tiện ích hệ thống",
+    "description": "Tìm file trên máy tức thì",
+    "recommended": false
+  },
+  {
+    "id": "Microsoft.PowerToys",
+    "name": "Microsoft PowerToys",
+    "category": "Tiện ích hệ thống",
+    "description": "Bộ công cụ tiện ích của Microsoft",
+    "recommended": false
+  },
+  {
+    "id": "ShareX.ShareX",
+    "name": "ShareX",
+    "category": "Tiện ích hệ thống",
+    "description": "Chụp và quay màn hình",
+    "recommended": false
+  },
+  {
+    "id": "Greenshot.Greenshot",
+    "name": "Greenshot",
+    "category": "Tiện ích hệ thống",
+    "description": "Chụp màn hình nhanh",
+    "recommended": false
+  },
+  {
+    "id": "CPUID.CPU-Z",
+    "name": "CPU-Z",
+    "category": "Tiện ích hệ thống",
+    "description": "Xem thông tin phần cứng",
+    "recommended": false
+  },
+  {
+    "id": "CrystalDewWorld.CrystalDiskInfo",
+    "name": "CrystalDiskInfo",
+    "category": "Tiện ích hệ thống",
+    "description": "Kiểm tra sức khỏe ổ cứng",
+    "recommended": false
+  },
+  {
+    "id": "REALiX.HWiNFO",
+    "name": "HWiNFO",
+    "category": "Tiện ích hệ thống",
+    "description": "Theo dõi nhiệt độ và phần cứng",
+    "recommended": false
+  },
+  {
+    "id": "VideoLAN.VLC",
+    "name": "VLC Media Player",
+    "category": "Đa phương tiện",
+    "description": "Xem mọi định dạng video / nhạc",
+    "recommended": true
+  },
+  {
+    "id": "Daum.PotPlayer",
+    "name": "PotPlayer",
+    "category": "Đa phương tiện",
+    "description": "Trình phát video nhẹ, nhiều tùy chỉnh",
+    "recommended": false
+  },
+  {
+    "id": "CodecGuide.K-LiteCodecPack.Standard",
+    "name": "K-Lite Codec Pack",
+    "category": "Đa phương tiện",
+    "description": "Bộ codec cho Windows Media Player",
+    "recommended": false
+  },
+  {
+    "id": "Spotify.Spotify",
+    "name": "Spotify",
+    "category": "Đa phương tiện",
+    "description": "Nghe nhạc trực tuyến",
+    "recommended": false
+  },
+  {
+    "id": "IrfanSkiljan.IrfanView",
+    "name": "IrfanView",
+    "category": "Đa phương tiện",
+    "description": "Xem ảnh nhanh",
+    "recommended": false
+  },
+  {
+    "id": "OBSProject.OBSStudio",
+    "name": "OBS Studio",
+    "category": "Đa phương tiện",
+    "description": "Quay màn hình, livestream",
+    "recommended": false
+  },
+  {
+    "id": "Audacity.Audacity",
+    "name": "Audacity",
+    "category": "Đa phương tiện",
+    "description": "Chỉnh sửa âm thanh",
+    "recommended": false
+  },
+  {
+    "id": "DucFabulous.UltraViewer",
+    "name": "UltraViewer",
+    "category": "Điều khiển từ xa",
+    "description": "Điều khiển máy tính từ xa (phổ biến ở VN)",
+    "recommended": true
+  },
+  {
+    "id": "TeamViewer.TeamViewer",
+    "name": "TeamViewer",
+    "category": "Điều khiển từ xa",
+    "description": "Điều khiển máy tính từ xa",
+    "recommended": false
+  },
+  {
+    "id": "AnyDesk.AnyDesk",
+    "name": "AnyDesk",
+    "category": "Điều khiển từ xa",
+    "description": "Điều khiển từ xa nhanh, nhẹ",
+    "recommended": false
+  },
+  {
+    "id": "RustDesk.RustDesk",
+    "name": "RustDesk",
+    "category": "Điều khiển từ xa",
+    "description": "Điều khiển từ xa mã nguồn mở",
+    "recommended": false
+  },
+  {
+    "id": "Tonec.InternetDownloadManager",
+    "name": "Internet Download Manager",
+    "category": "Tải xuống & Lưu trữ đám mây",
+    "description": "Tăng tốc tải xuống (bản dùng thử)",
+    "recommended": false
+  },
+  {
+    "id": "qBittorrent.qBittorrent",
+    "name": "qBittorrent",
+    "category": "Tải xuống & Lưu trữ đám mây",
+    "description": "Tải torrent miễn phí, không quảng cáo",
+    "recommended": false
+  },
+  {
+    "id": "Google.GoogleDrive",
+    "name": "Google Drive",
+    "category": "Tải xuống & Lưu trữ đám mây",
+    "description": "Đồng bộ file với Google Drive",
+    "recommended": false
+  },
+  {
+    "id": "Dropbox.Dropbox",
+    "name": "Dropbox",
+    "category": "Tải xuống & Lưu trữ đám mây",
+    "description": "Lưu trữ đám mây",
+    "recommended": false
+  },
+  {
+    "id": "Microsoft.VCRedist.2015+.x64",
+    "name": "Visual C++ Redistributable 2015-2022 (x64)",
+    "category": "Thư viện hệ thống (Runtime)",
+    "description": "Cần cho nhiều phần mềm và game",
+    "recommended": true
+  },
+  {
+    "id": "Microsoft.DotNet.DesktopRuntime.8",
+    "name": ".NET Desktop Runtime 8",
+    "category": "Thư viện hệ thống (Runtime)",
+    "description": "Cần cho các ứng dụng .NET",
+    "recommended": false
+  },
+  {
+    "id": "Microsoft.DirectX",
+    "name": "DirectX End-User Runtime",
+    "category": "Thư viện hệ thống (Runtime)",
+    "description": "Thư viện đồ họa cho game cũ",
+    "recommended": false
+  },
+  {
+    "id": "Oracle.JavaRuntimeEnvironment",
+    "name": "Java Runtime (JRE)",
+    "category": "Thư viện hệ thống (Runtime)",
+    "description": "Chạy các ứng dụng Java",
+    "recommended": false
+  },
+  {
+    "id": "Microsoft.VisualStudioCode",
+    "name": "Visual Studio Code",
+    "category": "Lập trình",
+    "description": "Trình soạn thảo code",
+    "recommended": false
+  },
+  {
+    "id": "Git.Git",
+    "name": "Git",
+    "category": "Lập trình",
+    "description": "Quản lý mã nguồn",
+    "recommended": false
+  },
+  {
+    "id": "Python.Python.3.12",
+    "name": "Python 3.12",
+    "category": "Lập trình",
+    "description": "Ngôn ngữ lập trình Python",
+    "recommended": false
+  },
+  {
+    "id": "OpenJS.NodeJS.LTS",
+    "name": "Node.js LTS",
+    "category": "Lập trình",
+    "description": "Môi trường chạy JavaScript",
+    "recommended": false
+  },
+  {
+    "id": "Microsoft.WindowsTerminal",
+    "name": "Windows Terminal",
+    "category": "Lập trình",
+    "description": "Cửa sổ dòng lệnh hiện đại",
+    "recommended": false
+  },
+  {
+    "id": "Valve.Steam",
+    "name": "Steam",
+    "category": "Game & Bảo mật",
+    "description": "Kho game PC",
+    "recommended": false
+  },
+  {
+    "id": "EpicGames.EpicGamesLauncher",
+    "name": "Epic Games Launcher",
+    "category": "Game & Bảo mật",
+    "description": "Kho game Epic",
+    "recommended": false
+  },
+  {
+    "id": "Malwarebytes.Malwarebytes",
+    "name": "Malwarebytes",
+    "category": "Game & Bảo mật",
+    "description": "Quét mã độc",
+    "recommended": false
+  },
+  {
+    "id": "Bitwarden.Bitwarden",
+    "name": "Bitwarden",
+    "category": "Game & Bảo mật",
+    "description": "Quản lý mật khẩu",
+    "recommended": false
+  }
+]
