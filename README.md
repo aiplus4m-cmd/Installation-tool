@@ -6,12 +6,17 @@ Công cụ chạy trên Windows giúp **cài đặt nhanh các ứng dụng cầ
 
 - Danh sách ~60 ứng dụng cơ bản, chia theo nhóm (trình duyệt, Zalo, bộ gõ tiếng Việt, văn phòng, PDF, tiện ích, đa phương tiện, điều khiển từ xa, runtime...).
 - **Tự kiểm tra ứng dụng đã cài**: ứng dụng đã có trên máy được đánh dấu ✔ *Đã cài đặt*, kèm nút **Gỡ bỏ** và **Cài lại**.
+  Nhận diện qua: gói winget (cả biến thể như `Google.Chrome.EXE`), *Programs and Features*, ứng dụng Store/MSIX
+  (vd. Windows Terminal có sẵn), và **bản portable** (UniKey, CPU-Z...) qua file exe ở các thư mục thường dùng,
+  shortcut Desktop/Start Menu, mục khởi động và tiến trình đang chạy.
 - Ứng dụng chưa cài có ô tích chọn và nút **Cài ngay**.
 - **Gợi ý ứng dụng** (★ Đề xuất) và nút *Chọn ứng dụng đề xuất* để chọn nhanh.
 - **Tìm kiếm** trong danh mục, và **tìm ứng dụng ngoài danh mục** trên kho winget (nhấn Enter hoặc nút *Tìm trên kho winget*).
 - Bấm **Cài đặt** → công cụ tự tìm gói, tải xuống, cài đặt im lặng lần lượt từng ứng dụng. Trạng thái từng ứng dụng thay đổi theo thời gian thực:
   *Đang chờ → Đang tìm kiếm → Đang tải xuống xx% → Đang cài đặt → Đã cài đặt* (hoặc báo lỗi).
 - Nếu mã gói trong danh mục không còn đúng, công cụ tự tìm theo tên ứng dụng và cài gói phù hợp.
+- Nếu winget không tải được bộ cài (lỗi mạng như `0x80072EFD`), công cụ tự tải trực tiếp theo địa chỉ trong
+  manifest winget (dùng proxy của hệ thống), kiểm tra SHA256 rồi cài im lặng. Khi đang chờ, trạng thái hiển thị thời gian đã trôi qua.
 - Nếu máy chưa có winget, công cụ đề nghị cài tự động.
 - Nhật ký chi tiết hiển thị trong cửa sổ và lưu tại `%TEMP%\WinSetupHelper.log`.
 
@@ -37,7 +42,11 @@ Có thể đặt một file `apps.json` cùng thư mục với `WinSetupHelper.e
 ]
 ```
 
-`id` là mã gói winget (tra bằng lệnh `winget search <tên>`).
+`id` là mã gói winget (tra bằng lệnh `winget search <tên>`). Các trường tùy chọn để nhận diện ứng dụng đã cài:
+
+- `match`: mẫu tên trong *Programs and Features* (hỗ trợ `*`), vd. `["VLC media player"]`
+- `exe`: tên file exe của bản portable, vd. `["UniKeyNT.exe"]`
+- `appx`: tên gói Store/MSIX, vd. `["Microsoft.WindowsTerminal"]`
 
 ## Build
 

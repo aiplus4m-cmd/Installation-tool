@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using WinSetupHelper.Models;
 using WinSetupHelper.Services;
 
@@ -62,7 +63,9 @@ namespace WinSetupHelper
                     Description = e.Description,
                     Category = e.Category,
                     Recommended = e.Recommended,
-                    MatchNames = e.Match
+                    MatchNames = e.Match,
+                    ExeNames = e.Exe,
+                    AppxNames = e.Appx
                 };
                 item.PropertyChanged += Item_PropertyChanged;
                 _catalog.Add(item);
@@ -116,11 +119,23 @@ namespace WinSetupHelper
                     i.SetBusy(AppPhase.Checking, "Đang kiểm tra...");
 
                 var ids = await Winget.GetInstalledIdsAsync(Log);
-                var names = await Task.Run(() => InstalledApps.ReadDisplayNames());
-                _installed = new InstalledIndex(ids, names);
-                Log($"Tìm thấy {_installed.IdCount} gói winget và {_installed.NameCount} ứng dụng trong Programs and Features.");
+                var (names, appx) = await Task.Run(() => (InstalledApps.ReadDisplayNames(), InstalledApps.ReadAppxNames()));
+                var baseIndex = new InstalledIndex(ids, names, appx);
+                Log($"Tìm thấy {baseIndex.IdCount} gói winget, {baseIndex.NameCount} ứng dụng trong Programs and Features, " +
+                    $"{baseIndex.AppxCount} gói Store/MSIX.");
 
-                foreach (var i in AllItems().Where(i => i.Phase == AppPhase.Checking))
+                // Ứng dụng chưa nhận diện được → tìm bản portable theo tên file exe
+                var checking = AllItems().Where(i => i.Phase == AppPhase.Checking).ToList();
+                var wantedExe = checking.Where(i => !IsDetected(baseIndex, i)).SelectMany(ExeOf).ToList();
+                var exes = new Dictionary<string, string>();
+                if (wantedExe.Count > 0)
+                {
+                    SetOverall("Đang tìm các ứng dụng portable (UniKey, CPU-Z...)...");
+                    exes = await Task.Run(() => InstalledApps.FindExecutables(wantedExe, Log));
+                }
+                _installed = new InstalledIndex(ids, names, appx, exes);
+
+                foreach (var i in checking)
                     ApplyInstalledState(i, true);
 
                 var installedCount = _catalog.Count(i => i.IsInstalled);
@@ -326,6 +341,18 @@ namespace WinSetupHelper
         {
             var item = ItemOf(sender);
             if (item == null) return;
+
+            if (item.IsPortable)
+            {
+                if (MessageBox.Show($"{item.Name} là bản portable (không cài vào Windows):\n{item.InstalledPath}\n\n" +
+                                    "Mở thư mục chứa ứng dụng để xóa thủ công?", Title,
+                        MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                {
+                    try { Process.Start("explorer.exe", $"/select,\"{item.InstalledPath}\""); } catch { }
+                }
+                return;
+            }
+
             if (MessageBox.Show($"Bạn có chắc muốn gỡ bỏ {item.Name}?", Title,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 Enqueue(JobKind.Uninstall, item);
@@ -335,8 +362,10 @@ namespace WinSetupHelper
         {
             var item = ItemOf(sender);
             if (item == null) return;
-            if (MessageBox.Show($"Gỡ bỏ và cài đặt lại {item.Name}?", Title,
-                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            var question = item.IsPortable
+                ? $"Cài đặt {item.Name} bản chính thức qua winget?"
+                : $"Gỡ bỏ và cài đặt lại {item.Name}?";
+            if (MessageBox.Show(question, Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 Enqueue(JobKind.Reinstall, item);
         }
 
@@ -371,7 +400,9 @@ namespace WinSetupHelper
                                 ok = await UninstallAsync(job.Item);
                                 break;
                             case JobKind.Reinstall:
-                                ok = await UninstallAsync(job.Item) && await InstallAsync(job.Item);
+                                ok = job.Item.IsPortable
+                                    ? await InstallAsync(job.Item, true)
+                                    : await UninstallAsync(job.Item) && await InstallAsync(job.Item);
                                 break;
                             default:
                                 ok = await InstallAsync(job.Item);
@@ -413,50 +444,133 @@ namespace WinSetupHelper
                 SetOverall($"Đang xử lý {_jobsDone + 1}/{_jobsTotal} ứng dụng...");
         }
 
-        private async Task<bool> InstallAsync(AppItem item)
+        /// <summary>
+        /// Hiển thị thời gian đã chờ khi winget không báo phần trăm,
+        /// để người dùng biết công cụ vẫn đang chạy.
+        /// </summary>
+        private DispatcherTimer StartElapsedTimer(AppItem item)
+        {
+            var phase = item.Phase;
+            var started = DateTime.Now;
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            timer.Tick += (s, e) =>
+            {
+                if (item.Phase != phase)
+                {
+                    phase = item.Phase;
+                    started = DateTime.Now;
+                }
+                if (!item.IsIndeterminate) return; // đã có phần trăm
+
+                var secs = (int)(DateTime.Now - started).TotalSeconds;
+                if (secs < 3) return;
+                string text;
+                switch (phase)
+                {
+                    case AppPhase.Searching: text = "Đang tìm kiếm gói cài đặt..."; break;
+                    case AppPhase.Downloading: text = "Đang tải xuống..."; break;
+                    case AppPhase.Installing: text = "Đang cài đặt..."; break;
+                    default: return;
+                }
+                item.StatusText = $"{text} ({FormatSeconds(secs)})";
+            };
+            timer.Start();
+            return timer;
+        }
+
+        private static string FormatSeconds(int secs) =>
+            secs < 60 ? $"{secs} giây" : $"{secs / 60} phút {secs % 60:00} giây";
+
+        private async Task<bool> InstallAsync(AppItem item, bool force = false)
         {
             Log($"▶ Cài đặt {item.Name} ({item.Id})");
             item.SetBusy(AppPhase.Searching, "Đang tìm kiếm gói cài đặt...");
-
-            var r = await Winget.InstallAsync(item.Id, line => OnWingetOutput(item, line));
-
-            if (r.ExitCode == Winget.NoApplicationsFound)
+            var timer = StartElapsedTimer(item);
+            try
             {
-                // ID không còn đúng (gói đổi tên...) → tự tìm theo tên ứng dụng
-                Log($"Không tìm thấy gói '{item.Id}', đang tìm theo tên \"{item.Name}\"...");
-                item.SetBusy(AppPhase.Searching, "Đang tìm gói phù hợp theo tên...");
-                var results = await Winget.SearchAsync(item.Name);
-                var best = results.FirstOrDefault(p => string.Equals(p.Name, item.Name, StringComparison.OrdinalIgnoreCase))
-                           ?? results.FirstOrDefault();
-                if (best != null)
+                var r = await Winget.InstallAsync(item.Id, line => OnWingetOutput(item, line), force);
+
+                if (r.ExitCode == Winget.NoApplicationsFound)
                 {
-                    Log($"Dùng gói thay thế: {best.Name} ({best.Id})");
-                    item.Id = best.Id;
-                    item.SetBusy(AppPhase.Searching, "Đã tìm thấy: " + best.Id);
-                    r = await Winget.InstallAsync(best.Id, line => OnWingetOutput(item, line));
+                    // ID không còn đúng (gói đổi tên...) → tự tìm theo tên ứng dụng
+                    Log($"Không tìm thấy gói '{item.Id}', đang tìm theo tên \"{item.Name}\"...");
+                    item.SetBusy(AppPhase.Searching, "Đang tìm gói phù hợp theo tên...");
+                    var results = await Winget.SearchAsync(item.Name);
+                    var best = results.FirstOrDefault(p => string.Equals(p.Name, item.Name, StringComparison.OrdinalIgnoreCase))
+                               ?? results.FirstOrDefault();
+                    if (best != null)
+                    {
+                        Log($"Dùng gói thay thế: {best.Name} ({best.Id})");
+                        item.Id = best.Id;
+                        item.SetBusy(AppPhase.Searching, "Đã tìm thấy: " + best.Id);
+                        r = await Winget.InstallAsync(best.Id, line => OnWingetOutput(item, line), force);
+                    }
                 }
-            }
 
-            if (Winget.IsSuccess(r.ExitCode))
+                if (Winget.IsSuccess(r.ExitCode))
+                {
+                    var text = Winget.NeedsReboot(r.ExitCode) ? "Đã cài đặt (cần khởi động lại)" : "Đã cài đặt";
+                    MarkInstalled(item, text, null);
+                    return true;
+                }
+
+                var reason = Winget.DescribeExit(r.ExitCode);
+
+                // winget không tải được bộ cài (máy chủ chặn, lỗi mạng/proxy...) → tự tải trực tiếp
+                if (Winget.IsNetworkError(r.ExitCode))
+                {
+                    Log($"winget không tải được ({reason}). Thử tải trực tiếp...");
+                    item.SetBusy(AppPhase.Searching, "Đang thử tải bằng cách khác...");
+                    var info = await Winget.ShowAsync(item.Id);
+                    if (info != null)
+                    {
+                        item.SetBusy(AppPhase.Downloading, "Đang tải xuống...");
+                        var res = await DirectInstaller.InstallAsync(item.Id, item.Name, item.ExeNames, info,
+                            pct =>
+                            {
+                                item.IsIndeterminate = false;
+                                item.Progress = pct;
+                                item.StatusText = $"Đang tải xuống... {pct:0}%";
+                            },
+                            status => item.SetBusy(AppPhase.Installing, status),
+                            Log);
+                        if (res.Success)
+                        {
+                            MarkInstalled(item, res.NeedsReboot ? "Đã cài đặt (cần khởi động lại)" : "Đã cài đặt", res.InstalledPath);
+                            return true;
+                        }
+                        reason = res.Error;
+                    }
+                    else
+                    {
+                        Log("Không lấy được địa chỉ tải bộ cài từ winget.");
+                    }
+                }
+
+                item.SetError("Cài đặt thất bại: " + reason);
+                Log($"✖ {item.Name}: cài đặt thất bại ({reason})");
+                return false;
+            }
+            finally
             {
-                _installed.AddId(item.Id);
-                item.InstalledId = item.Id;
-                item.InstalledName = null;
-                var text = Winget.NeedsReboot(r.ExitCode) ? "Đã cài đặt (cần khởi động lại)" : "Đã cài đặt";
-                item.SetInstalled(true, text);
-                Log($"✔ {item.Name}: {text}");
-                return true;
+                timer.Stop();
             }
+        }
 
-            var reason = Winget.DescribeExit(r.ExitCode);
-            item.SetError("Cài đặt thất bại: " + reason);
-            Log($"✖ {item.Name}: cài đặt thất bại ({reason})");
-            return false;
+        private void MarkInstalled(AppItem item, string text, string path)
+        {
+            _installed.AddId(item.Id);
+            item.InstalledId = path == null ? item.Id : null;
+            item.InstalledName = null;
+            item.InstalledAppx = null;
+            item.InstalledPath = path;
+            item.SetInstalled(true, text);
+            Log($"✔ {item.Name}: {text}" + (path != null ? $" — {path}" : ""));
         }
 
         private async Task<bool> UninstallAsync(AppItem item)
         {
-            var target = item.InstalledId ?? item.InstalledName ?? item.Id;
+            var target = item.InstalledId ?? item.InstalledName ?? item.InstalledAppx ?? item.Id;
             Log($"▶ Gỡ bỏ {item.Name} ({target})");
             item.SetBusy(AppPhase.Uninstalling, "Đang gỡ bỏ...");
 
@@ -466,12 +580,21 @@ namespace WinSetupHelper
             else
                 r = await Winget.UninstallAsync(item.InstalledId ?? item.Id, line => Log("   " + line));
 
+            // Ứng dụng Store/MSIX: gỡ trực tiếp nếu winget không gỡ được
+            if (item.InstalledAppx != null && await StillInstalledAsync(item))
+            {
+                Log($"Gỡ gói Store/MSIX {item.InstalledAppx}...");
+                await RunPowerShellAsync($"Get-AppxPackage -Name '{item.InstalledAppx}' | Remove-AppxPackage");
+            }
+
             if (!await StillInstalledAsync(item))
             {
                 _installed.RemoveId(item.InstalledId);
                 _installed.RemoveId(item.Id);
                 item.InstalledId = null;
                 item.InstalledName = null;
+                item.InstalledAppx = null;
+                item.InstalledPath = null;
                 item.SetInstalled(false, "Đã gỡ bỏ");
                 Log($"✔ Đã gỡ bỏ {item.Name}");
                 return true;
@@ -483,12 +606,26 @@ namespace WinSetupHelper
             return false;
         }
 
-        /// <summary>Kiểm tra lại một ứng dụng sau khi gỡ (Registry + winget list).</summary>
+        private static Task RunPowerShellAsync(string command) => Task.Run(() =>
+        {
+            try
+            {
+                var psi = new ProcessStartInfo("powershell.exe",
+                    "-NoProfile -ExecutionPolicy Bypass -Command \"" + command.Replace("\"", "\\\"") + "\"")
+                { UseShellExecute = false, CreateNoWindow = true };
+                using (var p = Process.Start(psi)) p?.WaitForExit();
+            }
+            catch { /* kiểm tra lại sau */ }
+        });
+
+        /// <summary>Kiểm tra lại một ứng dụng sau khi gỡ (Registry, Store/MSIX, winget list).</summary>
         private async Task<bool> StillInstalledAsync(AppItem item)
         {
-            var names = await Task.Run(() => InstalledApps.ReadDisplayNames());
-            var index = new InstalledIndex(null, names);
+            var (names, appx) = await Task.Run(() => (InstalledApps.ReadDisplayNames(), InstalledApps.ReadAppxNames()));
+            var index = new InstalledIndex(null, names, appx);
             if (index.FindName(item.InstalledName != null ? new[] { item.InstalledName } : PatternsOf(item)) != null)
+                return true;
+            if (item.InstalledAppx != null && index.FindAppx(new[] { item.InstalledAppx }) != null)
                 return true;
             var id = item.InstalledId ?? item.Id;
             return await Winget.IsInstalledAsync(id);
@@ -497,20 +634,42 @@ namespace WinSetupHelper
         private static string[] PatternsOf(AppItem item) =>
             item.MatchNames != null && item.MatchNames.Length > 0 ? item.MatchNames : new[] { item.Name };
 
-        /// <summary>Đánh dấu đã cài / chưa cài dựa trên mã gói winget hoặc tên trong Programs and Features.</summary>
+        private static string[] AppxOf(AppItem item) =>
+            item.AppxNames != null && item.AppxNames.Length > 0 ? item.AppxNames.Concat(new[] { item.Id }).ToArray() : new[] { item.Id };
+
+        private static string[] ExeOf(AppItem item) => item.ExeNames ?? new string[0];
+
+        private static bool IsDetected(InstalledIndex index, AppItem item) =>
+            index.FindId(item.Id) != null || index.FindName(PatternsOf(item)) != null || index.FindAppx(AppxOf(item)) != null;
+
+        /// <summary>
+        /// Đánh dấu đã cài / chưa cài dựa trên: mã gói winget, tên trong Programs and Features,
+        /// gói Store/MSIX, hoặc file exe của bản portable.
+        /// </summary>
         private void ApplyInstalledState(AppItem item, bool log)
         {
             var id = _installed.FindId(item.Id);
             var name = id == null ? _installed.FindName(PatternsOf(item)) : null;
+            var appx = id == null && name == null ? _installed.FindAppx(AppxOf(item)) : null;
+            var exe = id == null && name == null && appx == null ? _installed.FindExe(ExeOf(item)) : null;
+
             item.InstalledId = id;
             item.InstalledName = name;
-            item.SetInstalled(id != null || name != null);
+            item.InstalledAppx = appx;
+            item.InstalledPath = exe;
+
+            if (exe != null) item.SetInstalled(true, "Đã có (bản portable)");
+            else item.SetInstalled(id != null || name != null || appx != null);
 
             if (!log) return;
             if (id != null && !string.Equals(id, item.Id, StringComparison.OrdinalIgnoreCase))
                 Log($"   {item.Name}: đã cài (gói {id})");
             else if (name != null)
-                Log($"   {item.Name}: đã cài (phát hiện qua \"{name}\")");
+                Log($"   {item.Name}: đã cài (Programs and Features: \"{name}\")");
+            else if (appx != null)
+                Log($"   {item.Name}: đã cài (Store/MSIX: {appx})");
+            else if (exe != null)
+                Log($"   {item.Name}: bản portable tại {exe}");
         }
 
         /// <summary>Cập nhật trạng thái từ đầu ra của winget (chạy trên luồng nền).</summary>
@@ -520,7 +679,7 @@ namespace WinSetupHelper
             {
                 if (item.Phase == AppPhase.Searching || item.Phase == AppPhase.Downloading)
                 {
-                    if (item.Phase != AppPhase.Downloading) item.SetBusy(AppPhase.Downloading, "Đang tải xuống...", false);
+                    if (item.Phase != AppPhase.Downloading) item.SetBusy(AppPhase.Downloading, "Đang tải xuống...");
                     item.IsIndeterminate = false;
                     item.Progress = pct;
                     item.StatusText = $"Đang tải xuống... {pct:0}%";
@@ -531,7 +690,7 @@ namespace WinSetupHelper
             if (line.StartsWith("Found ", StringComparison.OrdinalIgnoreCase) && item.Phase == AppPhase.Searching)
                 item.StatusText = "Đã tìm thấy, chuẩn bị tải...";
             else if (line.StartsWith("Downloading", StringComparison.OrdinalIgnoreCase))
-                item.SetBusy(AppPhase.Downloading, "Đang tải xuống...", false);
+                item.SetBusy(AppPhase.Downloading, "Đang tải xuống...");
             else if (line.IndexOf("installer hash", StringComparison.OrdinalIgnoreCase) >= 0 ||
                      line.IndexOf("Starting package install", StringComparison.OrdinalIgnoreCase) >= 0 ||
                      line.IndexOf("Extracting", StringComparison.OrdinalIgnoreCase) >= 0)
