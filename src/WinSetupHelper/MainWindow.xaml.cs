@@ -574,13 +574,38 @@ namespace WinSetupHelper
             Log($"▶ Gỡ bỏ {item.Name} ({target})");
             item.SetBusy(AppPhase.Uninstalling, "Đang gỡ bỏ...");
 
+            // 1. Đóng ứng dụng nếu đang chạy (trình gỡ cài đặt hay lỗi khi file đang được dùng)
+            var entry = await Task.Run(() => Uninstaller.FindEntry(item.InstalledName, PatternsOf(item)));
+            item.StatusText = "Đang đóng ứng dụng...";
+            await Uninstaller.CloseProcessesAsync(ExeOf(item), Uninstaller.InstallDirOf(entry), Log);
+
+            // 2. Gỡ bằng winget
+            item.StatusText = "Đang gỡ bỏ...";
             ProcResult r;
             if (item.InstalledId == null && item.InstalledName != null)
                 r = await Winget.UninstallByNameAsync(item.InstalledName, line => Log("   " + line));
             else
                 r = await Winget.UninstallAsync(item.InstalledId ?? item.Id, line => Log("   " + line));
+            var reason = r.ExitCode == 0 ? null : Winget.DescribeExit(r.ExitCode);
+            if (r.ExitCode == 0 && entry != null)
+                await Uninstaller.WaitForRemovalAsync(entry, TimeSpan.FromSeconds(30));
 
-            // Ứng dụng Store/MSIX: gỡ trực tiếp nếu winget không gỡ được
+            // 3. winget gỡ không được → chạy trình gỡ của ứng dụng ở chế độ im lặng
+            if (entry != null && Uninstaller.EntryExists(entry))
+            {
+                Log($"winget chưa gỡ được ({reason ?? "ứng dụng vẫn còn"}). Thử trình gỡ cài đặt của ứng dụng...");
+                item.StatusText = "Đang gỡ bằng trình gỡ của ứng dụng...";
+                await Uninstaller.CloseProcessesAsync(ExeOf(item), Uninstaller.InstallDirOf(entry), Log);
+                var code = await Uninstaller.RunAsync(entry, Log);
+                if (code.HasValue)
+                {
+                    await Uninstaller.WaitForRemovalAsync(entry, TimeSpan.FromSeconds(90));
+                    if (code.Value != 0 && code.Value != 3010 && code.Value != 1641)
+                        reason = "trình gỡ cài đặt của ứng dụng trả về mã " + code.Value;
+                }
+            }
+
+            // 4. Ứng dụng Store/MSIX: gỡ trực tiếp nếu winget không gỡ được
             if (item.InstalledAppx != null && await StillInstalledAsync(item))
             {
                 Log($"Gỡ gói Store/MSIX {item.InstalledAppx}...");
@@ -600,8 +625,8 @@ namespace WinSetupHelper
                 return true;
             }
 
-            var reason = Winget.DescribeExit(r.ExitCode);
-            item.SetInstalled(true, "Gỡ bỏ thất bại: " + reason);
+            reason = reason ?? "ứng dụng vẫn còn trên máy";
+            item.SetInstalled(true, "Gỡ bỏ thất bại: " + reason, true);
             Log($"✖ {item.Name}: gỡ bỏ thất bại ({reason})");
             return false;
         }

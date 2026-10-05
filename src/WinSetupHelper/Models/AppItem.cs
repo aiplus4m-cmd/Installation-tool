@@ -124,10 +124,10 @@ namespace WinSetupHelper.Models
         public string StatusTone =>
             IsBusy ? "busy" : IsError ? "error" : IsInstalled ? "ok" : "none";
 
-        public void SetInstalled(bool installed, string text = null)
+        public void SetInstalled(bool installed, string text = null, bool isError = false)
         {
             if (installed) Selected = false;
-            _isError = false;
+            _isError = isError;
             _phase = AppPhase.None;
             IsInstalled = installed;
             StatusText = text ?? (installed ? "Đã cài đặt" : "Chưa cài đặt");
