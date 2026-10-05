@@ -160,6 +160,9 @@
                                         </StackPanel>
                                         <TextBlock Text="{Binding Description}" Foreground="#4B5563" TextWrapping="Wrap" Margin="0,2,0,0"/>
                                         <TextBlock Text="{Binding Id}" Foreground="#9CA3AF" FontSize="11" Margin="0,1,0,0"/>
+                                        <TextBlock Text="{Binding InstalledPath, StringFormat='Vị trí: {0}'}" Foreground="#9CA3AF"
+                                                   FontSize="11" TextTrimming="CharacterEllipsis" ToolTip="{Binding InstalledPath}"
+                                                   Visibility="{Binding HasInstalledPath, Converter={StaticResource BoolToVis}}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

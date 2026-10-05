@@ -47,6 +47,29 @@ namespace WinSetupHelper.Models
         /// <summary>Tên hiển thị trong "Programs and Features" khi phát hiện qua Registry.</summary>
         public string InstalledName { get; set; }
 
+        /// <summary>Tên file exe dùng để nhận diện bản portable.</summary>
+        public string[] ExeNames { get; set; }
+
+        /// <summary>Tên gói Store/MSIX dùng để nhận diện.</summary>
+        public string[] AppxNames { get; set; }
+
+        /// <summary>Tên gói Appx đang cài (nếu phát hiện qua Store/MSIX).</summary>
+        public string InstalledAppx { get; set; }
+
+        private string _installedPath;
+
+        /// <summary>Đường dẫn file exe khi phát hiện bản portable.</summary>
+        public string InstalledPath
+        {
+            get => _installedPath;
+            set { _installedPath = value; OnChanged(); OnChanged(nameof(HasInstalledPath)); }
+        }
+
+        public bool HasInstalledPath => !string.IsNullOrEmpty(_installedPath);
+
+        /// <summary>Chỉ phát hiện qua file exe (không đăng ký với Windows).</summary>
+        public bool IsPortable => HasInstalledPath && InstalledId == null && InstalledName == null && InstalledAppx == null;
+
         public bool Selected
         {
             get => _selected;

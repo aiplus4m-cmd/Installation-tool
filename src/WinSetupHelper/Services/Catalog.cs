@@ -19,6 +19,12 @@ namespace WinSetupHelper.Services
 
         /// <summary>Tùy chọn: mẫu tên trong "Programs and Features" (hỗ trợ dấu *).</summary>
         [DataMember(Name = "match", IsRequired = false, EmitDefaultValue = false)] public string[] Match { get; set; }
+
+        /// <summary>Tùy chọn: tên file exe để nhận diện bản portable (vd. UniKeyNT.exe).</summary>
+        [DataMember(Name = "exe", IsRequired = false, EmitDefaultValue = false)] public string[] Exe { get; set; }
+
+        /// <summary>Tùy chọn: tên gói Store/MSIX (Appx), vd. Microsoft.WindowsTerminal.</summary>
+        [DataMember(Name = "appx", IsRequired = false, EmitDefaultValue = false)] public string[] Appx { get; set; }
     }
 
     /// <summary>

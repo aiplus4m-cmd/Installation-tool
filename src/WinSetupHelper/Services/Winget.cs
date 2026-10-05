@@ -19,6 +19,14 @@ namespace WinSetupHelper.Services
         public List<string> Lines { get; } = new List<string>();
     }
 
+    public sealed class InstallerInfo
+    {
+        public string Type { get; set; }
+        public string NestedType { get; set; }
+        public string Url { get; set; }
+        public string Sha256 { get; set; }
+    }
+
     public sealed class PackageInfo
     {
         public string Name { get; set; }
@@ -81,8 +89,22 @@ namespace WinSetupHelper.Services
         public static bool NeedsReboot(int code) =>
             code == RebootRequiredToFinish || code == 3010 || code == 1641;
 
+        /// <summary>Lỗi tải xuống / mạng (WinINet 12xxx, HTTP, Delivery Optimization).</summary>
+        public static bool IsNetworkError(int code)
+        {
+            var u = unchecked((uint)code);
+            var facility = u & 0xFFFF0000;
+            var low = u & 0xFFFF;
+            return (facility == 0x80070000 && low >= 12000 && low <= 12200) || // WinINet
+                   facility == 0x80190000 ||                                     // HTTP status
+                   facility == 0x80D00000 || facility == 0x80D30000 ||           // Delivery Optimization
+                   u == 0x8A150008 || u == 0x80072EE2 || u == 0x800704CF;        // tải thất bại / hết thời gian / mất mạng
+        }
+
         public static string DescribeExit(int code)
         {
+            if (IsNetworkError(code))
+                return "không kết nối được máy chủ tải xuống (0x" + code.ToString("X8") + ")";
             switch (code)
             {
                 case NoApplicationsFound: return "không tìm thấy gói cài đặt";
@@ -92,9 +114,32 @@ namespace WinSetupHelper.Services
             }
         }
 
-        public static Task<ProcResult> InstallAsync(string id, Action<string> onLine) =>
+        public static Task<ProcResult> InstallAsync(string id, Action<string> onLine, bool force = false) =>
             RunAsync($"install --id {Quote(id)} -e --source winget --silent " +
-                     $"--accept-package-agreements {Agreements}", onLine);
+                     $"--accept-package-agreements {Agreements}" + (force ? " --force" : ""), onLine);
+
+        /// <summary>Thông tin bộ cài (loại, URL, SHA256) lấy từ 'winget show'.</summary>
+        public static async Task<InstallerInfo> ShowAsync(string id)
+        {
+            var r = await RunAsync($"show --id {Quote(id)} -e --source winget {Agreements}");
+            if (r.ExitCode != 0) return null;
+            var info = new InstallerInfo();
+            foreach (var raw in r.Lines)
+            {
+                var line = raw.Trim();
+                string Value() => line.Substring(line.IndexOf(':') + 1).Trim();
+                if (line.StartsWith("Installer Type:", StringComparison.OrdinalIgnoreCase) && info.Type == null)
+                    info.Type = Value().ToLowerInvariant();
+                else if (line.StartsWith("Nested Installer Type:", StringComparison.OrdinalIgnoreCase))
+                    info.NestedType = Value().ToLowerInvariant();
+                else if ((line.StartsWith("Installer Url:", StringComparison.OrdinalIgnoreCase) ||
+                          line.StartsWith("Download Url:", StringComparison.OrdinalIgnoreCase)) && info.Url == null)
+                    info.Url = Value();
+                else if (line.StartsWith("Installer SHA256:", StringComparison.OrdinalIgnoreCase) && info.Sha256 == null)
+                    info.Sha256 = Value();
+            }
+            return string.IsNullOrEmpty(info.Url) ? null : info;
+        }
 
         public static Task<ProcResult> UninstallAsync(string id, Action<string> onLine) =>
             RunAsync($"uninstall --id {Quote(id)} -e --silent {Agreements}", onLine);

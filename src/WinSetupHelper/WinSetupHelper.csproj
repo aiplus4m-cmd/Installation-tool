@@ -5,6 +5,8 @@
     <TargetFramework>net48</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>latest</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <RootNamespace>WinSetupHelper</RootNamespace>
     <AssemblyName>WinSetupHelper</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -22,6 +24,8 @@
   <ItemGroup>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Net" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
 
   <ItemGroup>

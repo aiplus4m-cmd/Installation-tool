@@ -7,6 +7,9 @@
     "recommended": true,
     "match": [
       "Google Chrome"
+    ],
+    "exe": [
+      "chrome.exe"
     ]
   },
   {
@@ -21,14 +24,20 @@
     "name": "Mozilla Firefox",
     "category": "Trình duyệt web",
     "description": "Trình duyệt mã nguồn mở, bảo mật",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "firefox.exe"
+    ]
   },
   {
     "id": "Brave.Brave",
     "name": "Brave",
     "category": "Trình duyệt web",
     "description": "Trình duyệt chặn quảng cáo sẵn",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "brave.exe"
+    ]
   },
   {
     "id": "Opera.Opera",
@@ -39,6 +48,9 @@
     "match": [
       "Opera Stable*",
       "Opera"
+    ],
+    "exe": [
+      "opera.exe"
     ]
   },
   {
@@ -46,7 +58,10 @@
     "name": "Zalo",
     "category": "Nhắn tin & Họp trực tuyến",
     "description": "Ứng dụng nhắn tin phổ biến tại Việt Nam",
-    "recommended": true
+    "recommended": true,
+    "exe": [
+      "Zalo.exe"
+    ]
   },
   {
     "id": "Telegram.TelegramDesktop",
@@ -57,6 +72,12 @@
     "match": [
       "Telegram Desktop*",
       "Telegram"
+    ],
+    "exe": [
+      "Telegram.exe"
+    ],
+    "appx": [
+      "TelegramMessengerLLP.TelegramDesktop"
     ]
   },
   {
@@ -68,6 +89,9 @@
     "match": [
       "Zoom Workplace*",
       "Zoom"
+    ],
+    "exe": [
+      "Zoom.exe"
     ]
   },
   {
@@ -79,6 +103,10 @@
     "match": [
       "Microsoft Teams*",
       "Teams Machine-Wide Installer"
+    ],
+    "appx": [
+      "MSTeams",
+      "MicrosoftTeams"
     ]
   },
   {
@@ -86,14 +114,23 @@
     "name": "Discord",
     "category": "Nhắn tin & Họp trực tuyến",
     "description": "Trò chuyện thoại / văn bản cho cộng đồng",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "Discord.exe"
+    ]
   },
   {
     "id": "Rakuten.Viber",
     "name": "Viber",
     "category": "Nhắn tin & Họp trực tuyến",
     "description": "Nhắn tin và gọi điện miễn phí",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "Viber.exe"
+    ],
+    "appx": [
+      "2414FC7A.Viber"
+    ]
   },
   {
     "id": "UniKey.UniKey",
@@ -103,6 +140,11 @@
     "recommended": true,
     "match": [
       "UniKey*"
+    ],
+    "exe": [
+      "UniKeyNT.exe",
+      "UniKey.exe",
+      "UniKeyNT64.exe"
     ]
   },
   {
@@ -110,14 +152,24 @@
     "name": "OpenKey",
     "category": "Bộ gõ tiếng Việt",
     "description": "Bộ gõ tiếng Việt mã nguồn mở",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "OpenKey64.exe",
+      "OpenKey32.exe",
+      "OpenKey.exe"
+    ]
   },
   {
     "id": "lamquangminh.EVKey",
     "name": "EVKey",
     "category": "Bộ gõ tiếng Việt",
     "description": "Bộ gõ tiếng Việt nhẹ, nhiều tính năng",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "EVKey64.exe",
+      "EVKey32.exe",
+      "EVKey.exe"
+    ]
   },
   {
     "id": "Microsoft.Office",
@@ -129,6 +181,13 @@
       "Microsoft 365 *",
       "Microsoft Office *",
       "Microsoft Office"
+    ],
+    "exe": [
+      "WINWORD.EXE",
+      "EXCEL.EXE"
+    ],
+    "appx": [
+      "Microsoft.Office.Desktop"
     ]
   },
   {
@@ -136,7 +195,10 @@
     "name": "LibreOffice",
     "category": "Văn phòng & PDF",
     "description": "Bộ văn phòng miễn phí, tương thích Office",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "soffice.exe"
+    ]
   },
   {
     "id": "ONLYOFFICE.DesktopEditors",
@@ -146,6 +208,9 @@
     "recommended": false,
     "match": [
       "ONLYOFFICE*"
+    ],
+    "exe": [
+      "DesktopEditors.exe"
     ]
   },
   {
@@ -156,6 +221,10 @@
     "recommended": true,
     "match": [
       "Adobe Acrobat*"
+    ],
+    "exe": [
+      "Acrobat.exe",
+      "AcroRd32.exe"
     ]
   },
   {
@@ -167,6 +236,10 @@
     "match": [
       "Foxit PDF Reader*",
       "Foxit Reader*"
+    ],
+    "exe": [
+      "FoxitPDFReader.exe",
+      "FoxitReader.exe"
     ]
   },
   {
@@ -178,6 +251,9 @@
     "match": [
       "SumatraPDF*",
       "Sumatra PDF*"
+    ],
+    "exe": [
+      "SumatraPDF.exe"
     ]
   },
   {
@@ -185,7 +261,13 @@
     "name": "Notion",
     "category": "Văn phòng & PDF",
     "description": "Ghi chú, quản lý công việc",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "Notion.exe"
+    ],
+    "appx": [
+      "Notion.Notion"
+    ]
   },
   {
     "id": "7zip.7zip",
@@ -195,6 +277,9 @@
     "recommended": true,
     "match": [
       "7-Zip*"
+    ],
+    "exe": [
+      "7zFM.exe"
     ]
   },
   {
@@ -205,6 +290,9 @@
     "recommended": false,
     "match": [
       "WinRAR*"
+    ],
+    "exe": [
+      "WinRAR.exe"
     ]
   },
   {
@@ -215,6 +303,9 @@
     "recommended": true,
     "match": [
       "Notepad++*"
+    ],
+    "exe": [
+      "notepad++.exe"
     ]
   },
   {
@@ -225,6 +316,9 @@
     "recommended": false,
     "match": [
       "Everything*"
+    ],
+    "exe": [
+      "Everything.exe"
     ]
   },
   {
@@ -235,6 +329,12 @@
     "recommended": false,
     "match": [
       "PowerToys*"
+    ],
+    "exe": [
+      "PowerToys.exe"
+    ],
+    "appx": [
+      "Microsoft.PowerToys"
     ]
   },
   {
@@ -242,14 +342,20 @@
     "name": "ShareX",
     "category": "Tiện ích hệ thống",
     "description": "Chụp và quay màn hình",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "ShareX.exe"
+    ]
   },
   {
     "id": "Greenshot.Greenshot",
     "name": "Greenshot",
     "category": "Tiện ích hệ thống",
     "description": "Chụp màn hình nhanh",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "Greenshot.exe"
+    ]
   },
   {
     "id": "CPUID.CPU-Z",
@@ -260,6 +366,11 @@
     "match": [
       "CPUID CPU-Z*",
       "CPU-Z*"
+    ],
+    "exe": [
+      "cpuz.exe",
+      "cpuz_x64.exe",
+      "cpuz_x32.exe"
     ]
   },
   {
@@ -267,7 +378,12 @@
     "name": "CrystalDiskInfo",
     "category": "Tiện ích hệ thống",
     "description": "Kiểm tra sức khỏe ổ cứng",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "DiskInfo64.exe",
+      "DiskInfo32.exe",
+      "DiskInfoA64.exe"
+    ]
   },
   {
     "id": "REALiX.HWiNFO",
@@ -277,6 +393,10 @@
     "recommended": false,
     "match": [
       "HWiNFO*"
+    ],
+    "exe": [
+      "HWiNFO64.exe",
+      "HWiNFO32.exe"
     ]
   },
   {
@@ -287,6 +407,9 @@
     "recommended": true,
     "match": [
       "VLC media player"
+    ],
+    "exe": [
+      "vlc.exe"
     ]
   },
   {
@@ -298,6 +421,10 @@
     "match": [
       "PotPlayer*",
       "Daum PotPlayer*"
+    ],
+    "exe": [
+      "PotPlayerMini64.exe",
+      "PotPlayerMini.exe"
     ]
   },
   {
@@ -315,7 +442,13 @@
     "name": "Spotify",
     "category": "Đa phương tiện",
     "description": "Nghe nhạc trực tuyến",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "Spotify.exe"
+    ],
+    "appx": [
+      "SpotifyAB.SpotifyMusic"
+    ]
   },
   {
     "id": "IrfanSkiljan.IrfanView",
@@ -325,6 +458,10 @@
     "recommended": false,
     "match": [
       "IrfanView*"
+    ],
+    "exe": [
+      "i_view64.exe",
+      "i_view32.exe"
     ]
   },
   {
@@ -332,7 +469,10 @@
     "name": "OBS Studio",
     "category": "Đa phương tiện",
     "description": "Quay màn hình, livestream",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "obs64.exe"
+    ]
   },
   {
     "id": "Audacity.Audacity",
@@ -342,6 +482,9 @@
     "recommended": false,
     "match": [
       "Audacity*"
+    ],
+    "exe": [
+      "Audacity.exe"
     ]
   },
   {
@@ -349,28 +492,41 @@
     "name": "UltraViewer",
     "category": "Điều khiển từ xa",
     "description": "Điều khiển máy tính từ xa (phổ biến ở VN)",
-    "recommended": true
+    "recommended": true,
+    "exe": [
+      "UltraViewer_Desktop.exe",
+      "UltraViewer.exe"
+    ]
   },
   {
     "id": "TeamViewer.TeamViewer",
     "name": "TeamViewer",
     "category": "Điều khiển từ xa",
     "description": "Điều khiển máy tính từ xa",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "TeamViewer.exe"
+    ]
   },
   {
     "id": "AnyDesk.AnyDesk",
     "name": "AnyDesk",
     "category": "Điều khiển từ xa",
     "description": "Điều khiển từ xa nhanh, nhẹ",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "AnyDesk.exe"
+    ]
   },
   {
     "id": "RustDesk.RustDesk",
     "name": "RustDesk",
     "category": "Điều khiển từ xa",
     "description": "Điều khiển từ xa mã nguồn mở",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "rustdesk.exe"
+    ]
   },
   {
     "id": "Tonec.InternetDownloadManager",
@@ -380,6 +536,9 @@
     "recommended": false,
     "match": [
       "Internet Download Manager*"
+    ],
+    "exe": [
+      "IDMan.exe"
     ]
   },
   {
@@ -387,21 +546,30 @@
     "name": "qBittorrent",
     "category": "Tải xuống & Lưu trữ đám mây",
     "description": "Tải torrent miễn phí, không quảng cáo",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "qbittorrent.exe"
+    ]
   },
   {
     "id": "Google.GoogleDrive",
     "name": "Google Drive",
     "category": "Tải xuống & Lưu trữ đám mây",
     "description": "Đồng bộ file với Google Drive",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "GoogleDriveFS.exe"
+    ]
   },
   {
     "id": "Dropbox.Dropbox",
     "name": "Dropbox",
     "category": "Tải xuống & Lưu trữ đám mây",
     "description": "Lưu trữ đám mây",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "Dropbox.exe"
+    ]
   },
   {
     "id": "Microsoft.VCRedist.2015+.x64",
@@ -467,6 +635,9 @@
     "recommended": false,
     "match": [
       "Python 3.12*"
+    ],
+    "appx": [
+      "PythonSoftwareFoundation.Python.3.12"
     ]
   },
   {
@@ -481,21 +652,33 @@
     "name": "Windows Terminal",
     "category": "Lập trình",
     "description": "Cửa sổ dòng lệnh hiện đại",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "WindowsTerminal.exe"
+    ],
+    "appx": [
+      "Microsoft.WindowsTerminal"
+    ]
   },
   {
     "id": "Valve.Steam",
     "name": "Steam",
     "category": "Game & Bảo mật",
     "description": "Kho game PC",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "steam.exe"
+    ]
   },
   {
     "id": "EpicGames.EpicGamesLauncher",
     "name": "Epic Games Launcher",
     "category": "Game & Bảo mật",
     "description": "Kho game Epic",
-    "recommended": false
+    "recommended": false,
+    "exe": [
+      "EpicGamesLauncher.exe"
+    ]
   },
   {
     "id": "Malwarebytes.Malwarebytes",
@@ -505,6 +688,9 @@
     "recommended": false,
     "match": [
       "Malwarebytes*"
+    ],
+    "exe": [
+      "mbam.exe"
     ]
   },
   {
@@ -515,6 +701,9 @@
     "recommended": false,
     "match": [
       "Bitwarden*"
+    ],
+    "exe": [
+      "Bitwarden.exe"
     ]
   }
 ]
