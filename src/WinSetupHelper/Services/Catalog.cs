@@ -16,6 +16,9 @@ namespace WinSetupHelper.Services
         [DataMember(Name = "category")] public string Category { get; set; }
         [DataMember(Name = "description")] public string Description { get; set; }
         [DataMember(Name = "recommended")] public bool Recommended { get; set; }
+
+        /// <summary>Tùy chọn: mẫu tên trong "Programs and Features" (hỗ trợ dấu *).</summary>
+        [DataMember(Name = "match", IsRequired = false, EmitDefaultValue = false)] public string[] Match { get; set; }
     }
 
     /// <summary>

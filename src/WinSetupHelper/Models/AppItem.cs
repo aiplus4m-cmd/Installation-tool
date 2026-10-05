@@ -38,6 +38,15 @@ namespace WinSetupHelper.Models
         public string Category { get; set; }
         public bool Recommended { get; set; }
 
+        /// <summary>Mẫu tên hiển thị trong "Programs and Features" để nhận diện đã cài.</summary>
+        public string[] MatchNames { get; set; }
+
+        /// <summary>Mã gói winget thực tế đang cài (có thể là biến thể, vd. Google.Chrome.EXE).</summary>
+        public string InstalledId { get; set; }
+
+        /// <summary>Tên hiển thị trong "Programs and Features" khi phát hiện qua Registry.</summary>
+        public string InstalledName { get; set; }
+
         public bool Selected
         {
             get => _selected;
