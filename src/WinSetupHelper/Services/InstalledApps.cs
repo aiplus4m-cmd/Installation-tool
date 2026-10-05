@@ -103,6 +103,17 @@ namespace WinSetupHelper.Services
         }
     }
 
+    public sealed class UninstallEntry
+    {
+        public string KeyName { get; set; }
+        public string DisplayName { get; set; }
+        public string UninstallString { get; set; }
+        public string QuietUninstallString { get; set; }
+        public string InstallLocation { get; set; }
+        public string DisplayIcon { get; set; }
+        public bool IsMsi { get; set; }
+    }
+
     public static class InstalledApps
     {
         private const string UninstallKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
@@ -118,9 +129,13 @@ namespace WinSetupHelper.Services
         };
 
         /// <summary>Đọc tên các ứng dụng trong "Programs and Features".</summary>
-        public static List<string> ReadDisplayNames()
+        public static List<string> ReadDisplayNames() =>
+            ReadUninstallEntries().Select(e => e.DisplayName).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+        /// <summary>Đọc các mục trong "Programs and Features" (tên, lệnh gỡ cài đặt, thư mục cài).</summary>
+        public static List<UninstallEntry> ReadUninstallEntries()
         {
-            var names = new List<string>();
+            var entries = new List<UninstallEntry>();
             var sources = new[]
             {
                 (RegistryHive.LocalMachine, RegistryView.Registry64),
@@ -146,7 +161,16 @@ namespace WinSetupHelper.Services
                                     var name = app?.GetValue("DisplayName") as string;
                                     if (string.IsNullOrWhiteSpace(name)) continue;
                                     if (app.GetValue("ParentKeyName") != null) continue; // bản cập nhật con
-                                    names.Add(name.Trim());
+                                    entries.Add(new UninstallEntry
+                                    {
+                                        KeyName = sub,
+                                        DisplayName = name.Trim(),
+                                        UninstallString = app.GetValue("UninstallString") as string,
+                                        QuietUninstallString = app.GetValue("QuietUninstallString") as string,
+                                        InstallLocation = app.GetValue("InstallLocation") as string,
+                                        DisplayIcon = app.GetValue("DisplayIcon") as string,
+                                        IsMsi = (app.GetValue("WindowsInstaller") as int?) == 1
+                                    });
                                 }
                             }
                             catch { /* bỏ qua khóa không đọc được */ }
@@ -155,7 +179,7 @@ namespace WinSetupHelper.Services
                 }
                 catch { /* hive/view không khả dụng */ }
             }
-            return names.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            return entries;
         }
 
         /// <summary>
@@ -302,7 +326,7 @@ namespace WinSetupHelper.Services
         }
 
         /// <summary>Lấy đường dẫn exe từ một dòng lệnh (có thể có ngoặc kép và tham số).</summary>
-        private static string ExtractExePath(string command)
+        internal static string ExtractExePath(string command)
         {
             if (string.IsNullOrWhiteSpace(command)) return null;
             command = command.Trim();
