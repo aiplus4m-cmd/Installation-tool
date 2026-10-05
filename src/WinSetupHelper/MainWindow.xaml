@@ -1,0 +1,252 @@
+<Window x:Class="WinSetupHelper.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Windows Setup Helper - Cài đặt ứng dụng nhanh"
+        Width="1100" Height="740" MinWidth="820" MinHeight="520"
+        WindowStartupLocation="CenterScreen"
+        Background="#F9FAFB" FontFamily="Segoe UI" FontSize="13">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Tiêu đề -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="Windows Setup Helper" FontSize="22" FontWeight="Bold" Foreground="#111827"/>
+            <TextBlock Text="Chọn các ứng dụng cần thiết rồi bấm Cài đặt — công cụ sẽ tự tìm, tải và cài đặt giúp bạn."
+                       Foreground="{StaticResource Muted}" Margin="0,2,0,0"/>
+        </StackPanel>
+
+        <!-- Cảnh báo winget -->
+        <Border x:Name="WingetBanner" Grid.Row="1" Visibility="Collapsed" Background="#FEF3C7"
+                BorderBrush="#F59E0B" BorderThickness="1" CornerRadius="6" Padding="12,8" Margin="0,0,0,12">
+            <DockPanel>
+                <Button x:Name="BtnInstallWinget" DockPanel.Dock="Right" Content="Cài đặt winget tự động"
+                        Style="{StaticResource PrimaryButton}" Click="InstallWinget_Click"/>
+                <TextBlock x:Name="WingetBannerText" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,12,0"
+                           Text="Không tìm thấy winget (Windows Package Manager). Công cụ cần winget để tải và cài đặt ứng dụng."/>
+            </DockPanel>
+        </Border>
+
+        <!-- Thanh tìm kiếm -->
+        <Grid Grid.Row="2" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <TextBox x:Name="SearchBox" Padding="8,6" VerticalContentAlignment="Center"
+                         TextChanged="SearchBox_TextChanged" KeyDown="SearchBox_KeyDown"/>
+                <TextBlock x:Name="SearchPlaceholder" IsHitTestVisible="False" Margin="11,0,0,0"
+                           VerticalAlignment="Center" Foreground="#9CA3AF"
+                           Text="Tìm ứng dụng trong danh mục... (nhấn Enter để tìm thêm trên kho winget)"/>
+            </Grid>
+            <ComboBox x:Name="CategoryBox" Grid.Column="1" Width="230" Margin="8,0,0,0"
+                      VerticalContentAlignment="Center" SelectionChanged="CategoryBox_SelectionChanged"/>
+            <Button x:Name="BtnSearchOnline" Grid.Column="2" Margin="8,0,0,0"
+                    Content="🔍 Tìm trên kho winget" Click="SearchOnline_Click"/>
+            <Button x:Name="BtnRefresh" Grid.Column="3" Margin="8,0,0,0"
+                    Content="⟳ Kiểm tra lại" Click="Refresh_Click"/>
+        </Grid>
+
+        <!-- Tab -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <RadioButton x:Name="TabCatalog" Style="{StaticResource TabToggle}" IsChecked="True"
+                         Checked="Tab_Checked" Content="Danh mục ứng dụng"/>
+            <RadioButton x:Name="TabSearch" Style="{StaticResource TabToggle}"
+                         Checked="Tab_Checked" Content="Kết quả tìm kiếm"/>
+        </StackPanel>
+
+        <!-- Danh sách -->
+        <Border Grid.Row="4" Background="White" BorderBrush="{StaticResource Border}"
+                BorderThickness="1" CornerRadius="6">
+            <Grid>
+                <DataGrid x:Name="AppGrid" AutoGenerateColumns="False" CanUserAddRows="False"
+                          CanUserDeleteRows="False" CanUserResizeRows="False" IsReadOnly="True"
+                          HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#F3F4F6" BorderThickness="0" Background="White"
+                          RowBackground="White" SelectionMode="Single" SelectionUnit="FullRow"
+                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                          VirtualizingPanel.ScrollUnit="Pixel">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#F9FAFB"/>
+                            <Setter Property="Foreground" Value="#374151"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Padding" Value="8,8"/>
+                            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Padding" Value="8,6"/>
+                            <Setter Property="Foreground" Value="#111827"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#F8FAFF"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#EFF6FF"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border Background="#F3F4F6" Padding="10,6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#1F2937"/>
+                                            <TextBlock Text="{Binding ItemCount, StringFormat=' ({0})'}" Foreground="#6B7280"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </DataGrid.GroupStyle>
+                    <DataGrid.Columns>
+                        <!-- Chọn -->
+                        <DataGridTemplateColumn Header="Chọn" Width="56">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  Visibility="{Binding CanSelect, Converter={StaticResource BoolToVis}}"/>
+                                        <TextBlock Text="✔" Foreground="#16A34A" FontWeight="Bold" FontSize="15"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsInstalled, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- Ứng dụng -->
+                        <DataGridTemplateColumn Header="Ứng dụng" Width="*" SortMemberPath="Name">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"/>
+                                            <Border Background="#FEF3C7" CornerRadius="4" Padding="6,1" Margin="8,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Visibility="{Binding Recommended, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="★ Đề xuất" FontSize="11" Foreground="#B45309" FontWeight="SemiBold"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding Description}" Foreground="#4B5563" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                        <TextBlock Text="{Binding Id}" Foreground="#9CA3AF" FontSize="11" Margin="0,1,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- Trạng thái -->
+                        <DataGridTemplateColumn Header="Trạng thái" Width="240">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock x:Name="St" Text="{Binding StatusText}" FontWeight="SemiBold"
+                                                   Foreground="#6B7280" TextWrapping="Wrap"/>
+                                        <ProgressBar Height="6" Margin="0,5,0,0" Minimum="0" Maximum="100"
+                                                     Value="{Binding Progress, Mode=OneWay}"
+                                                     IsIndeterminate="{Binding IsIndeterminate}"
+                                                     Foreground="{StaticResource Accent}" BorderThickness="0" Background="#E5E7EB"
+                                                     Visibility="{Binding ShowProgress, Converter={StaticResource BoolToVis}}"/>
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding StatusTone}" Value="ok">
+                                            <Setter TargetName="St" Property="Foreground" Value="#16A34A"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding StatusTone}" Value="busy">
+                                            <Setter TargetName="St" Property="Foreground" Value="#2563EB"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding StatusTone}" Value="error">
+                                            <Setter TargetName="St" Property="Foreground" Value="#DC2626"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- Thao tác -->
+                        <DataGridTemplateColumn Header="Thao tác" Width="190">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <StackPanel Orientation="Horizontal"
+                                                    Visibility="{Binding CanManage, Converter={StaticResource BoolToVis}}">
+                                            <Button Content="Gỡ bỏ" Style="{StaticResource SmallButton}"
+                                                    Foreground="#DC2626" Click="RowUninstall_Click"/>
+                                            <Button Content="Cài lại" Style="{StaticResource SmallButton}"
+                                                    Click="RowReinstall_Click"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal"
+                                                    Visibility="{Binding CanSelect, Converter={StaticResource BoolToVis}}">
+                                            <Button Content="Cài ngay" Style="{StaticResource SmallButton}"
+                                                    Foreground="#2563EB" Click="RowInstall_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <TextBlock x:Name="EmptyText" Visibility="Collapsed" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" Foreground="{StaticResource Muted}" TextAlignment="Center"
+                           TextWrapping="Wrap" MaxWidth="460"/>
+            </Grid>
+        </Border>
+
+        <!-- Thanh hành động -->
+        <Grid Grid.Row="5" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="★ Chọn ứng dụng đề xuất" Click="SelectRecommended_Click"/>
+            <Button Grid.Column="1" Content="Bỏ chọn tất cả" Margin="8,0,0,0" Click="ClearSelection_Click"/>
+            <StackPanel Grid.Column="2" Margin="16,0" VerticalAlignment="Center">
+                <TextBlock x:Name="OverallText" Foreground="#374151" TextTrimming="CharacterEllipsis"/>
+                <ProgressBar x:Name="OverallProgress" Height="6" Margin="0,4,0,0" Visibility="Collapsed"
+                             Foreground="{StaticResource Accent}" BorderThickness="0" Background="#E5E7EB"/>
+            </StackPanel>
+            <Button x:Name="BtnInstall" Grid.Column="3" Style="{StaticResource PrimaryButton}"
+                    Padding="24,10" FontSize="14" Content="Cài đặt (0)" IsEnabled="False"
+                    Click="InstallSelected_Click"/>
+        </Grid>
+
+        <!-- Nhật ký -->
+        <Expander Grid.Row="6" Header="Nhật ký chi tiết" Margin="0,10,0,0" Foreground="#374151">
+            <TextBox x:Name="LogBox" Height="150" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
+                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                     Background="#111827" Foreground="#E5E7EB" BorderThickness="0" Padding="8" Margin="0,6,0,0"/>
+        </Expander>
+    </Grid>
+</Window>
