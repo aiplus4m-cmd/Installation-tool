@@ -1,7 +1,8 @@
 <Window x:Class="WinSetupHelper.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Windows Setup Helper - Cài đặt ứng dụng nhanh"
+        Title="Windows Setup Helper - Cài đặt ứng dụng nhanh | NhảmStudio"
+        Icon="pack://application:,,,/app.ico"
         Width="1100" Height="740" MinWidth="820" MinHeight="520"
         WindowStartupLocation="CenterScreen"
         Background="#F9FAFB" FontFamily="Segoe UI" FontSize="13">
@@ -17,11 +18,22 @@
         </Grid.RowDefinitions>
 
         <!-- Tiêu đề -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,12">
-            <TextBlock Text="Windows Setup Helper" FontSize="22" FontWeight="Bold" Foreground="#111827"/>
-            <TextBlock Text="Chọn các ứng dụng cần thiết rồi bấm Cài đặt — công cụ sẽ tự tìm, tải và cài đặt giúp bạn."
-                       Foreground="{StaticResource Muted}" Margin="0,2,0,0"/>
-        </StackPanel>
+        <DockPanel Grid.Row="0" Margin="0,0,0,12" LastChildFill="True">
+            <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" Margin="16,0,0,0">
+                <Image Source="pack://application:,,,/Assets/logo.png" Height="52" HorizontalAlignment="Right"
+                       RenderOptions.BitmapScalingMode="HighQuality" Cursor="Hand"
+                       ToolTip="NhảmStudio - https://topvl.net" MouseLeftButtonUp="Logo_Click"/>
+                <TextBlock HorizontalAlignment="Right" Margin="0,4,0,0" FontSize="12" Foreground="{StaticResource Muted}">
+                    <Run Text="Phát triển bởi NhảmStudio ·"/>
+                    <Hyperlink NavigateUri="https://topvl.net" RequestNavigate="Link_RequestNavigate">topvl.net</Hyperlink>
+                </TextBlock>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Windows Setup Helper" FontSize="22" FontWeight="Bold" Foreground="#111827"/>
+                <TextBlock Text="Chọn các ứng dụng cần thiết rồi bấm Cài đặt — công cụ sẽ tự tìm, tải và cài đặt giúp bạn."
+                           Foreground="{StaticResource Muted}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </DockPanel>
 
         <!-- Cảnh báo winget -->
         <Border x:Name="WingetBanner" Grid.Row="1" Visibility="Collapsed" Background="#FEF3C7"
